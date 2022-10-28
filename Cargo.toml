@@ -9,9 +9,13 @@ edition = "2021"
 mysql = "*"
 
 [[bin]]
-name = "server"
+name = "Chatclient"
 path = "src/Chatclient/main.rs"
 
 [[bin]]
-name = "client"
+name = "Zentralserver"
 path = "src/Zentralserver/main.rs"
+
+[[bin]]
+name = "Testfile"
+path = "src/Testfile.rs"
