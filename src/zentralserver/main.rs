@@ -1,9 +1,3 @@
-#![allow(unused)]
-
-
-mod test_mysql;
-pub mod variables;
-
 use std::fmt::Display;
 use std::thread;
 use std::net::{TcpListener, TcpStream, Shutdown};
@@ -12,6 +6,8 @@ use std::str;
 use mysql::*;
 use mysql::prelude::*;
 
+
+mod dataanbin;
 
 fn handle_client(mut stream: TcpStream) {
     let mut buff = [0 as u8; 48];
@@ -40,16 +36,6 @@ fn handle_data(incomming_data: &[u8]) -> String {
 }
 
 
-/*fn stringbuilder() -> &'static str {
-    let mysql_ipaddr = variables::mysql_ip("remote".to_string());
-    let mysql_user = variables::mysql_user("remote".to_string());
-    let mysql_database = variables::mysql_database("test".to_string());
-    let mysql_passwort = variables::mysql_passwort("remote".to_string());
-    println!("{}{}{}{}", mysql_database, mysql_user, mysql_ipaddr, mysql_passwort);
-    let url: &str = &*format!("mysql://{mysql_user}:{mysql_passwort}@{mysql_ipaddr}:3306/{mysql_database}");
-    return url;}*/
-
- // "mysql://{mysql_user}:{mysql_passwort}@{mysql_ipaddr}:3306/{mysql_database}"
 fn data_sql() -> std::result::Result<(), Box<dyn std::error::Error>> {
     println!("Start MYsql");
     //let url = "mysql://{mysql_user}:{mysql_passwort}@{mysql_ipaddr}:3306/{mysql_database}";
@@ -73,12 +59,8 @@ fn data_sql() -> std::result::Result<(), Box<dyn std::error::Error>> {
 
 
 fn main() -> std::io::Result<()> {
-
-    data_sql();
-    let mut test_ausgabe = variables::variablen();
     //let substring = test_ausgabe.into_string();
 
-    println!("{}", test_ausgabe);
     //data_sql();
     let listener = TcpListener::bind("127.0.0.1:80")?;
 

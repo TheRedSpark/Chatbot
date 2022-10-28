@@ -13,8 +13,8 @@ name = "Chatclient"
 path = "src/Chatclient/main.rs"
 
 [[bin]]
-name = "Zentralserver"
-path = "src/Zentralserver/main.rs"
+name = "zentralserver"
+path = "src/zentralserver/main.rs"
 
 [[bin]]
 name = "Testfile"
