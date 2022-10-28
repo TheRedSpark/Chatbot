@@ -4,6 +4,8 @@ use std::thread;
 use std::net::{TcpListener, TcpStream, Shutdown};
 use std::io::{Read, Write};
 use std::str;
+use mysql::*;
+use mysql::prelude::*;
 
 fn handle_client(mut stream: TcpStream) {
     let mut buff = [0 as u8; 48];
@@ -19,6 +21,7 @@ fn handle_client(mut stream: TcpStream) {
     let data = handle_data(data.as_bytes());
     let response: String = format!("{}{}{}{}", echo_key, client_id, data, command);
     stream.write(response.as_ref()).unwrap();
+    //stream.flush();
 }
 
 fn handle_data(incomming_data: &[u8]) -> String {
@@ -30,7 +33,29 @@ fn handle_data(incomming_data: &[u8]) -> String {
     return response;
 }
 
+
+fn data_sql() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    println!("Start MYsql");
+    let url = "";
+    let pool = Pool::new(url)?;
+    println!("Got pool!");
+    let mut conn = pool.get_conn()?;
+    println!("Goot conn!");
+    conn.query_drop(
+        r"CREATE TABLE `Test_DB`.`new_table` (
+  `idnew_table` INT NOT NULL AUTO_INCREMENT,
+  `new_tablecol` VARCHAR(45) NULL,
+  `new_tablecol1` VARCHAR(45) NULL,
+  PRIMARY KEY (`idnew_table`));")?;
+
+    println!("Yay!");
+
+    Ok(())
+}
+
+
 fn main() -> std::io::Result<()> {
+    data_sql();
     let listener = TcpListener::bind("127.0.0.1:80")?;
 
     for stream in listener.incoming() {
