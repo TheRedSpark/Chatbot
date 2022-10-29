@@ -1,15 +1,16 @@
+use mysql::params;
 use mysql::prelude::Queryable;
 
 pub mod variables;
 
 #[derive(Debug, PartialEq, Eq)]
-struct Payment {
-    customer_id: i32,
-    amount: i32,
-    account_name: Option<String>,
+struct Message {
+    sender_id: i32,
+    retriever_id: i32,
+    message_data: String,
 }
 
-pub(crate) fn stringbuilder() -> String {
+pub(crate) fn string_builder() -> String {
     let mysql_ipaddr = variables::mysql_ip("remote".to_string());
     let mysql_user = variables::mysql_user("remote".to_string());
     let mysql_database = variables::mysql_database("test".to_string());
@@ -19,8 +20,33 @@ pub(crate) fn stringbuilder() -> String {
     return url.to_string();
 }
 
-pub(crate) fn datenbananbindung() -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let pool = mysql::Pool::new(&*stringbuilder())?;
+pub(crate) fn datenbank_putter(sender_id:i32,retriever_id:i32,message_data:String) -> std::result::Result<(), Box<dyn std::error::Error>> {
+    let pool = mysql::Pool::new(&*string_builder())?;
+
+    let mut conn = pool.get_conn()?;
+
+    // Let's create a table for payments.
+
+
+    conn.exec_drop(
+        "insert into Message (sender_id, retriever_id, message_data) values (:sender_id, :retriever_id, :message_data)",
+        params! {
+            "sender_id" => sender_id,
+            "retriever_id" => retriever_id,
+            "message_data" => &message_data,
+        },
+    ).expect("TODO: panic message beim insert");
+
+
+
+
+    println!("Yay!");
+
+    Ok(())
+}
+
+pub(crate) fn datenbank_getter() -> std::result::Result<(), Box<dyn std::error::Error>> {
+    let pool = mysql::Pool::new(&*string_builder())?;
 
     let mut conn = pool.get_conn()?;
 
@@ -29,8 +55,8 @@ pub(crate) fn datenbananbindung() -> std::result::Result<(), Box<dyn std::error:
     let selected_payments = conn
         .query_map(
             "SELECT customer_id, amount, account_name from payment",
-            |(customer_id, amount, account_name)| {
-                Payment { customer_id, amount, account_name }
+            |(sender_id, retriever_id, message_data)| {
+                Message { sender_id, retriever_id, message_data }
             },
         )?;
 
@@ -40,3 +66,5 @@ pub(crate) fn datenbananbindung() -> std::result::Result<(), Box<dyn std::error:
 
     Ok(())
 }
+
+

@@ -60,7 +60,7 @@ fn data_sql() -> std::result::Result<(), Box<dyn std::error::Error>> {
 
 fn main() -> std::io::Result<()> {
     //let substring = test_ausgabe.into_string();
-    dataanbin::datenbananbindung().expect("TODO: panic message sql");
+    dataanbin::datenbank_putter(002,003,"Hi i bims".to_string()).expect("TODO: panic message sql");
     println!("Das wars");
     //data_sql();
     let listener = TcpListener::bind("127.0.0.1:80")?;
