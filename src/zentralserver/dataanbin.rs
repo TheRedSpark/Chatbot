@@ -2,6 +2,13 @@ use mysql::prelude::Queryable;
 
 pub mod variables;
 
+#[derive(Debug, PartialEq, Eq)]
+struct Payment {
+    customer_id: i32,
+    amount: i32,
+    account_name: Option<String>,
+}
+
 pub(crate) fn stringbuilder() -> String {
     let mysql_ipaddr = variables::mysql_ip("remote".to_string());
     let mysql_user = variables::mysql_user("remote".to_string());
@@ -13,19 +20,21 @@ pub(crate) fn stringbuilder() -> String {
 }
 
 pub(crate) fn datenbananbindung() -> std::result::Result<(), Box<dyn std::error::Error>> {
-    print!("{}", stringbuilder());
     let pool = mysql::Pool::new(&*stringbuilder())?;
-    //let pool = Pool::new(url)?;
 
     let mut conn = pool.get_conn()?;
 
     // Let's create a table for payments.
-    conn.query_drop(
-        r"CREATE TABLE payment (
-            customer_id int not null,
-            amount int not null,
-            account_name text
-        )")?;
+
+    let selected_payments = conn
+        .query_map(
+            "SELECT customer_id, amount, account_name from payment",
+            |(customer_id, amount, account_name)| {
+                Payment { customer_id, amount, account_name }
+            },
+        )?;
+
+    println!("{:?}", selected_payments);
 
     println!("Yay!");
 
