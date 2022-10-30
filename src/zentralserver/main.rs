@@ -11,20 +11,18 @@ mod dataanbin;
 
 
 fn handle_client(mut stream: TcpStream) -> std::result::Result<(), Box<dyn std::error::Error>> {
-    let mut buff = [0 as u8; 48];
+    let mut buff = [0 as u8; 256];
     stream.read(&mut buff).unwrap();
     let sender_id_str = str::from_utf8(&buff[0..8]).unwrap();
     let sender_id:i32= sender_id_str.parse().unwrap();
     let client_id_str = str::from_utf8(&buff[8..16]).unwrap();
     let client_id:i32 = client_id_str.parse().unwrap();
-    let message = str::from_utf8(&buff[16..32]).unwrap();
-    let key = str::from_utf8(&buff[32..48]).unwrap();
+    let message = str::from_utf8(&buff[16..]).unwrap();
     println!("Echo is :{}", sender_id);
     println!("Client {} ist verbunden", client_id);
     println!("Data is: {}", message);
-    println!("Command is: {}", key);
     //let data = handle_data(data.as_bytes());
-    let response: String = format!("{}{}{}{}", sender_id, client_id, message, key);
+    let response: String = format!("{}{}{}", sender_id, client_id, message);
     stream.write(response.as_ref()).unwrap();
     datenbank_putter(sender_id, client_id, message.to_string()).expect("TODO: panic message");
     Ok(())
@@ -42,7 +40,7 @@ fn handle_data(incomming_data: &[u8]) -> String {
 
 fn main() -> std::io::Result<()> {
     let listener = TcpListener::bind("127.0.0.1:80")?;
-
+    println!("Server gestartet");
     for stream in listener.incoming() {
         handle_client(stream?);
     }
