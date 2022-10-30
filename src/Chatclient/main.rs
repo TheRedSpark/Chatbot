@@ -11,9 +11,9 @@ fn communication() {
     let server_ip = "127.0.0.1:80";
     use std::net::{Shutdown, TcpStream};
     let mut buffer = [0 as u8; 48];
-    let client_id = "Clientid";
-    let empfanger_id = "Empfanid";
-    let message = "Hallo Boy i bims";
+    let client_id = "00000001";
+    let empfanger_id = "00000002";
+    let message = "Hallo Gil i bims";
     let key = "The komische key";
     let mut stream = TcpStream::connect(server_ip)
         .expect("Couldn't connect to the server...");
