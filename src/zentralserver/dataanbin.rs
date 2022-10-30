@@ -20,13 +20,9 @@ pub(crate) fn string_builder() -> String {
     return url.to_string();
 }
 
-pub(crate) fn datenbank_putter(sender_id:i32,retriever_id:i32,message_data:String) -> std::result::Result<(), Box<dyn std::error::Error>> {
+pub(crate) fn datenbank_putter(sender_id: i32, retriever_id: i32, message_data: String) -> std::result::Result<(), Box<dyn std::error::Error>> {
     let pool = mysql::Pool::new(&*string_builder())?;
-
     let mut conn = pool.get_conn()?;
-
-    // Let's create a table for payments.
-
 
     conn.exec_drop(
         "insert into Message (sender_id, retriever_id, message_data) values (:sender_id, :retriever_id, :message_data)",
@@ -36,22 +32,13 @@ pub(crate) fn datenbank_putter(sender_id:i32,retriever_id:i32,message_data:Strin
             "message_data" => &message_data,
         },
     ).expect("TODO: panic message beim insert");
-
-
-
-
     println!("Yay!");
-
     Ok(())
 }
 
 pub(crate) fn datenbank_getter() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let pool = mysql::Pool::new(&*string_builder())?;
-
     let mut conn = pool.get_conn()?;
-
-    // Let's create a table for payments.
-
     let selected_payments = conn
         .query_map(
             "SELECT customer_id, amount, account_name from payment",
@@ -59,9 +46,8 @@ pub(crate) fn datenbank_getter() -> std::result::Result<(), Box<dyn std::error::
                 Message { sender_id, retriever_id, message_data }
             },
         )?;
-
+    println!("Get from the Datenbank");
     println!("{:?}", selected_payments);
-
     println!("Yay!");
 
     Ok(())
