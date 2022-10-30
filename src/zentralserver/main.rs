@@ -6,8 +6,8 @@ use std::str;
 use mysql::*;
 use mysql::prelude::*;
 
-
 mod dataanbin;
+
 
 fn handle_client(mut stream: TcpStream) {
     let mut buff = [0 as u8; 48];
@@ -20,10 +20,9 @@ fn handle_client(mut stream: TcpStream) {
     println!("Client {} ist verbunden", client_id);
     println!("Data is: {}", data);
     println!("Command is: {}", command);
-    let data = handle_data(data.as_bytes());
+    //let data = handle_data(data.as_bytes());
     let response: String = format!("{}{}{}{}", echo_key, client_id, data, command);
     stream.write(response.as_ref()).unwrap();
-    //stream.flush();
 }
 
 fn handle_data(incomming_data: &[u8]) -> String {
@@ -36,33 +35,7 @@ fn handle_data(incomming_data: &[u8]) -> String {
 }
 
 
-fn data_sql() -> std::result::Result<(), Box<dyn std::error::Error>> {
-    println!("Start MYsql");
-    //let url = "mysql://{mysql_user}:{mysql_passwort}@{mysql_ipaddr}:3306/{mysql_database}";
-    let url = "mysql://root:@localhost:3306/test";
-    println!("Gettem Pool");
-    let pool = Pool::new(url)?;
-    println!("Got pool!");
-    let mut conn = pool.get_conn()?;
-    println!("Goot conn!");
-    /*    conn.query_drop(
-            r"CREATE TABLE `Test_DB`.`new_table` (
-      `idnew_table` INT NOT NULL AUTO_INCREMENT,
-      `new_tablecol` VARCHAR(45) NULL,
-      `new_tablecol1` VARCHAR(45) NULL,
-      PRIMARY KEY (`idnew_table`));")?;*/
-
-    println!("Yay!");
-
-    Ok(())
-}
-
-
 fn main() -> std::io::Result<()> {
-    //let substring = test_ausgabe.into_string();
-    dataanbin::datenbank_putter(002,003,"Hi i bims".to_string()).expect("TODO: panic message sql");
-    println!("Das wars");
-    //data_sql();
     let listener = TcpListener::bind("127.0.0.1:80")?;
 
     for stream in listener.incoming() {
