@@ -1,7 +1,7 @@
 #![allow(unused)]
 
 use std::net;
-use std::net::{TcpStream, AddrParseError};
+use std::net::{TcpStream, AddrParseError, Shutdown};
 use std::io::{Empty, Error, Read, Write};
 use std::str;
 use std::{thread, time};
@@ -12,16 +12,17 @@ fn communication() //-> io::Result<()>
 {
     let stdin = io::stdin();
     let server_ip = "127.0.0.1:80";
-    use std::net::{Shutdown, TcpStream};
+
     let mut buff_res = [0 as u8; 48];
     let client_id = "90000001";
     let empfanger_id = "90000002";
     let mut message = String::new();
-    //let mut message = "So weiter gehts because the blub is on the way to the moon and back say the kid";
-
+    println!("Bitte gib deine Nachricht an den Server an:");
     while true {
         stdin.read_line(&mut message);
         if message.len() > 240 {
+            println!("Leider war deine Nachricht zu lang bitte versuche es nocheinmal und bitte \
+            bleibe unter 240 Zeichen.");
             continue;
         } else { break; }
     }
