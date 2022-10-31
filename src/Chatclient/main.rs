@@ -7,18 +7,17 @@ use std::str;
 use std::{thread, time};
 use std::fmt::Error as OtherError;
 use std::io;
+mod variables;
 
-fn communication() //-> io::Result<()>
-{
+fn get_credentials(){
+
+}
+
+fn message_from_user() -> String {
     let stdin = io::stdin();
-    let server_ip = "127.0.0.1:80";
-
-    let mut buff_res = [0 as u8; 48];
-    let client_id = "90000001";
-    let empfanger_id = "90000002";
     let mut message = String::new();
     println!("Bitte gib deine Nachricht an den Server an:");
-    while true {
+    loop {
         stdin.read_line(&mut message);
         if message.len() > 240 {
             println!("Leider war deine Nachricht zu lang bitte versuche es nocheinmal und bitte \
@@ -26,6 +25,17 @@ fn communication() //-> io::Result<()>
             continue;
         } else { break; }
     }
+    return message.to_owned();
+}
+
+fn communication(message: String) //-> io::Result<()>
+{
+    let mut buff_res = [0 as u8; 48];
+    let server_ip = variables::mysql_ip("local".to_owned()).to_owned()+":80";
+    println!("{:?}",server_ip);
+
+    let client_id = "90000001";
+    let empfanger_id = "90000002";
 
 
     let mut stream = TcpStream::connect(server_ip)
@@ -38,9 +48,10 @@ fn communication() //-> io::Result<()>
     stream.write(buff_send.as_ref());
     stream.read(&mut buff_res).unwrap();
     println!("Der Server sendet: {}", str::from_utf8(&buff_res).unwrap());
-    if str::from_utf8(&buff_res).unwrap() != buff_send {
-        println!("Beim senden ist was schiefegangen")
-    }
+
+/*    if str::from_utf8(&buff_res).unwrap() != buff_send {
+        println!("Beim senden ist was schiefegangen bitte versuche es erneut!")
+    }*/
 
 
     stream.shutdown(Shutdown::Both).expect("shutdown call failed");
@@ -48,7 +59,9 @@ fn communication() //-> io::Result<()>
 }
 
 fn main() {
-    communication();
+    println!("Anwendung gestartet");
+
+    communication(message_from_user());
 }
 
 
@@ -58,6 +71,8 @@ mod tests {
     fn it_works() {
         assert!(true)
     }
+
+    //assert_eq!(1,1);
 
     #[test]
     #[should_panic]

@@ -12,7 +12,7 @@ struct Message {
 
 pub(crate) fn string_builder() -> String {
     let mysql_ipaddr = variables::mysql_ip("remote".to_string());
-    let mysql_user = variables::mysql_user("remote".to_string());
+    let mysql_user = variables::mysql_user("test".to_string());
     let mysql_database = variables::mysql_database("test".to_string());
     let mysql_passwort = variables::mysql_passwort("remote".to_string());
     //println!("{}{}{}{}", mysql_database, mysql_user, mysql_ipaddr, mysql_passwort);
