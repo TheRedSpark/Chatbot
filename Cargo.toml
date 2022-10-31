@@ -15,7 +15,3 @@ path = "src/Chatclient/main.rs"
 [[bin]]
 name = "zentralserver"
 path = "src/zentralserver/main.rs"
-
-[[bin]]
-name = "testfile"
-path = "src/Testfile.rs"
