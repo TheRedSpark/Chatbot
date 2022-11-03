@@ -31,18 +31,19 @@ fn message_from_user() -> String {
 fn communication(message: String) //-> io::Result<()>
 {
     let mut buff_res = [0 as u8; 48];
-    let server_ip = variables::mysql_ip("local".to_owned()).to_owned()+":80";
+    let server_ip = variables::mysql_ip("local".to_owned()).to_owned()+":1111";
     println!("{:?}",server_ip);
 
     let client_id = "90000001";
     let empfanger_id = "90000002";
+    let command = "9001";
 
 
     let mut stream = TcpStream::connect(server_ip)
         .expect("Couldn't connect to the server...");
     println!("Connectet");
 
-    let buff_send = (client_id.to_owned() + empfanger_id + &message);
+    let buff_send = (client_id.to_owned() + empfanger_id +command+ &message);
 
     println!("Der Client sendet: {}", buff_send);
     stream.write(buff_send.as_ref());

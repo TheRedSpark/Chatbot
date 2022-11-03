@@ -10,6 +10,14 @@ struct Message {
     message_data: String,
 }
 
+struct Log {
+    sender_id: i32,
+    secondary_info:i32,
+    command:String,
+    data:String,
+
+}
+
 pub(crate) fn string_builder() -> String {
     let mysql_ipaddr = variables::mysql_ip("remote".to_string());
     let mysql_user = variables::mysql_user("test".to_string());

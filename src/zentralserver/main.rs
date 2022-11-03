@@ -1,6 +1,7 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::{Read, Write};
 use std::str;
+use std::str::from_utf8;
 use crate::dataanbin::datenbank_putter;
 
 mod dataanbin;
@@ -14,31 +15,35 @@ fn handle_client(mut stream: TcpStream) -> std::result::Result<(), Box<dyn std::
     stream.read(&mut buff).unwrap();
     let sender_id_str = str::from_utf8(&buff[0..8]).unwrap();
     let sender_id: i32 = sender_id_str.parse().unwrap();
-    let client_id_str = str::from_utf8(&buff[8..16]).unwrap();
-    let client_id: i32 = client_id_str.parse().unwrap();
-    let message = str::from_utf8(&buff[16..]).unwrap();
-    println!("Echo is :{}", sender_id);
-    println!("Client {} ist verbunden", client_id);
-    println!("Data is: {}", message);
+    let second_inf_str = str::from_utf8(&buff[8..16]).unwrap();
+    let second_inf: i32 = second_inf_str.parse().unwrap();
+    let command_str = str::from_utf8(&buff[16..20]).unwrap();
+    let command:i32 = command_str.parse().unwrap();
+    let data_strem = str::from_utf8(&buff[20..]).unwrap();
+    println!("Client {} ist verbunden", sender_id);
+    println!("Secondärinformationen sind: {}", second_inf);
+    println!("Der Befehl lautet: {}",handle_command(command));
+    println!("Data is: {}", data_strem);
     //let data = handle_data(data.as_bytes());
-    let response: String = format!("{}{}{}", sender_id, client_id, message);
+    let response: String = format!("{}{}{}", sender_id, second_inf, data_strem);
     stream.write(response.as_ref()).unwrap();
-    datenbank_putter(sender_id, client_id, message.to_string()).expect("Fehler bei der Eingabe der Datenbank");
+    datenbank_putter(sender_id, second_inf, data_strem.to_string()).expect("Fehler bei der Eingabe der Datenbank");
     Ok(())
 }
 
-/*fn handle_data(incomming_data: &[u8]) -> String {
-    let data: [u8; 16] = *match incomming_data {
-        b"D000000000000001" => b"D000000000000002",
-        &_ => b"Der000005555ror1"
+fn handle_command(command:i32) -> String {
+    let response = match command {
+        9001 => "Incomming Message",
+        9002 => "Authentification",
+        _ => "The Problem"
     };
-    let response = str::from_utf8(&data).unwrap().parse().unwrap();
-    return response;
-}*/
+    return response.to_owned();
+}
 
 
 fn main() -> std::io::Result<()> {
-    let listener = TcpListener::bind("127.0.0.1:80")?;
+    println!("Starten vom lissener");
+    let listener = TcpListener::bind("127.0.0.1:1111")?;
     println!("Server gestartet");
     for stream in listener.incoming() {
         handle_client(stream?).expect("panic: handle_client Funktionsfehler");
