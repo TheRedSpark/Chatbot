@@ -1,5 +1,8 @@
 use mysql::params;
 use mysql::prelude::Queryable;
+use std::str::from_utf8;
+use chrono;
+use chrono::Utc;
 
 pub mod variables;
 
@@ -31,14 +34,18 @@ pub(crate) fn string_builder() -> String {
 
 pub(crate) fn server_logging(sender_id: i32, secondary_information: i32, command:i32, message_data: String)-> std::result::Result<(), Box<dyn std::error::Error>> {
     let pool = mysql::Pool::new(&*string_builder())?;
+    let now = Utc::now();
+    let stamp = now.naive_utc();
     let mut conn = pool.get_conn()?;
     conn.exec_drop(
-        "insert into Message (sender_id, retriever_id, message_data) values (:sender_id, :retriever_id, :message_data)",
+        "insert into log (zeit, sender_id, secondary_info,command, message_data) values (:zeit, :sender_id, :secondary_info, :command, :message_data)",
         params! {
+            "zeit" => stamp.to_string().to_owned(),
             "sender_id" => sender_id,
-            "secondary_id" => secondary_information,
+            "secondary_info" => secondary_information,
             "command" => command,
             "message_data" => &message_data,
+
         },
     ).expect("TODO: panic message beim loggin");
     println!("Yay! LOG");

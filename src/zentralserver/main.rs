@@ -4,6 +4,7 @@ use std::str;
 use std::str::from_utf8;
 use crate::dataanbin::datenbank_putter;
 use crate::dataanbin::server_logging;
+use chrono::{Datelike, Timelike, Utc};
 
 mod dataanbin;
 
@@ -28,8 +29,8 @@ fn handle_client(mut stream: TcpStream) -> std::result::Result<(), Box<dyn std::
     //let data = handle_data(data.as_bytes());
     let response: String = format!("{}{}{}", sender_id, second_inf, data_strem);
     stream.write(response.as_ref()).unwrap();
-    //server_logging(sender_id, second_inf, command, data_strem.to_owned()).expect("TODO: panic message beim logging in der main");
-    datenbank_putter(sender_id, second_inf, data_strem.to_string()).expect("Fehler bei der Eingabe der Datenbank");
+    server_logging(sender_id, second_inf.to_owned(), command, data_strem.to_owned()).expect("TODO: panic message beim logging in der main");
+    //datenbank_putter(sender_id, second_inf, data_strem.to_string()).expect("Fehler bei der Eingabe der Datenbank");
     Ok(())
 }
 
@@ -43,8 +44,33 @@ fn handle_command(command: i32) -> String {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+fn zeit() {
+    let now = Utc::now();
+
+    println!("Der test ist: {}",now.date_naive());
+    println!("Der test ist: {}",now.naive_local());
+}
+
+
+
+
+
+
+
+
 fn main() -> std::io::Result<()> {
     println!("Starten vom lissener");
+    zeit();
     let listener = TcpListener::bind("127.0.0.1:1111")?;
     println!("Server gestartet");
     for stream in listener.incoming() {
