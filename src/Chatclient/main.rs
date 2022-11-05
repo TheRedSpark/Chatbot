@@ -13,6 +13,7 @@ mod variables;
 fn get_credentials() {}
 
 fn message_from_user() -> String {
+    println!("Message start");
     let stdin = io::stdin();
     let mut message = String::new();
     println!("Bitte gib deine Nachricht an den Server an:");
@@ -29,6 +30,7 @@ fn message_from_user() -> String {
 
 fn communication(message: String) //-> io::Result<()>
 {
+    println!("Commonication Start");
     let mut buff_res = [0 as u8; 48];
     let server_ip = variables::mysql_ip("local".to_owned()).to_owned() + ":1111";
     println!("{:?}", server_ip);
@@ -59,24 +61,16 @@ fn communication(message: String) //-> io::Result<()>
 }
 
 fn hauptmenu() -> i32 {
-    /*    let stdin = io::stdin();
-        let modus: i32;
-        let mut terminal_input = String::new();
-        stdin.read_line(&mut terminal_input);*/
-
     loop {
         let mut terminal_input = String::new();
         io::stdin()
             .read_line(&mut terminal_input)
             .expect("Failed to read line");
-        let guess: u32 = match terminal_input.trim().parse() {
+        let desition: i32 = match terminal_input.trim().parse() {
             Ok(num) => num,
             Err(_) => continue,
         };
-        match terminal_input {
-            1 => bla
-            _ => println!("Das ist leider keine Richtige Option")
-        }
+        return desition;
 
 
     };
@@ -85,8 +79,18 @@ fn hauptmenu() -> i32 {
 
 fn main() {
     println!("Anwendung gestartet");
+    println!("Drücke 1 für den Nachrichtendienst");
+    loop {
 
-    communication(message_from_user());
+        match hauptmenu() {
+            1 => communication(message_from_user()),
+            _ => println!("Das ist leider keine Richtige Option")
+        }
+
+    }
+
+
+
 }
 
 
