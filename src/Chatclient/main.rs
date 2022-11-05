@@ -7,11 +7,10 @@ use std::str;
 use std::{thread, time};
 use std::fmt::Error as OtherError;
 use std::io;
+
 mod variables;
 
-fn get_credentials(){
-
-}
+fn get_credentials() {}
 
 fn message_from_user() -> String {
     let stdin = io::stdin();
@@ -31,8 +30,8 @@ fn message_from_user() -> String {
 fn communication(message: String) //-> io::Result<()>
 {
     let mut buff_res = [0 as u8; 48];
-    let server_ip = variables::mysql_ip("local".to_owned()).to_owned()+":1111";
-    println!("{:?}",server_ip);
+    let server_ip = variables::mysql_ip("local".to_owned()).to_owned() + ":1111";
+    println!("{:?}", server_ip);
 
     let client_id = "90000001";
     let empfanger_id = "90000002";
@@ -43,21 +42,46 @@ fn communication(message: String) //-> io::Result<()>
         .expect("Couldn't connect to the server...");
     println!("Connectet");
 
-    let buff_send = (client_id.to_owned() + empfanger_id +command+ &message);
+    let buff_send = (client_id.to_owned() + empfanger_id + command + &message);
 
     println!("Der Client sendet: {}", buff_send);
     stream.write(buff_send.as_ref());
     stream.read(&mut buff_res).unwrap();
     println!("Der Server sendet: {}", str::from_utf8(&buff_res).unwrap());
 
-/*    if str::from_utf8(&buff_res).unwrap() != buff_send {
-        println!("Beim senden ist was schiefegangen bitte versuche es erneut!")
-    }*/
+    /*    if str::from_utf8(&buff_res).unwrap() != buff_send {
+            println!("Beim senden ist was schiefegangen bitte versuche es erneut!")
+        }*/
 
 
     stream.shutdown(Shutdown::Both).expect("shutdown call failed");
     thread::sleep(time::Duration::from_millis(500));
 }
+
+fn hauptmenu() -> i32 {
+    /*    let stdin = io::stdin();
+        let modus: i32;
+        let mut terminal_input = String::new();
+        stdin.read_line(&mut terminal_input);*/
+
+    loop {
+        let mut terminal_input = String::new();
+        io::stdin()
+            .read_line(&mut terminal_input)
+            .expect("Failed to read line");
+        let guess: u32 = match terminal_input.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
+        match terminal_input {
+            1 => bla
+            _ => println!("Das ist leider keine Richtige Option")
+        }
+
+
+    };
+}
+
 
 fn main() {
     println!("Anwendung gestartet");
