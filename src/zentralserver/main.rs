@@ -3,6 +3,7 @@ use std::io::{Read, Write};
 use std::str;
 use std::str::from_utf8;
 use crate::dataanbin::datenbank_putter;
+use crate::dataanbin::server_logging;
 
 mod dataanbin;
 
@@ -18,20 +19,21 @@ fn handle_client(mut stream: TcpStream) -> std::result::Result<(), Box<dyn std::
     let second_inf_str = str::from_utf8(&buff[8..16]).unwrap();
     let second_inf: i32 = second_inf_str.parse().unwrap();
     let command_str = str::from_utf8(&buff[16..20]).unwrap();
-    let command:i32 = command_str.parse().unwrap();
+    let command: i32 = command_str.parse().unwrap();
     let data_strem = str::from_utf8(&buff[20..]).unwrap();
     println!("Client {} ist verbunden", sender_id);
     println!("Secondärinformationen sind: {}", second_inf);
-    println!("Der Befehl lautet: {}",handle_command(command));
+    println!("Der Befehl lautet: {}", handle_command(command));
     println!("Data is: {}", data_strem);
     //let data = handle_data(data.as_bytes());
     let response: String = format!("{}{}{}", sender_id, second_inf, data_strem);
     stream.write(response.as_ref()).unwrap();
+    //server_logging(sender_id, second_inf, command, data_strem.to_owned()).expect("TODO: panic message beim logging in der main");
     datenbank_putter(sender_id, second_inf, data_strem.to_string()).expect("Fehler bei der Eingabe der Datenbank");
     Ok(())
 }
 
-fn handle_command(command:i32) -> String {
+fn handle_command(command: i32) -> String {
     let response = match command {
         9001 => "Incomming Message",
         9002 => "Authentification",

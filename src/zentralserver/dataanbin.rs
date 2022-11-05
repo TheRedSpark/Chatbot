@@ -28,6 +28,23 @@ pub(crate) fn string_builder() -> String {
     return url.to_string();
 }
 
+
+pub(crate) fn server_logging(sender_id: i32, secondary_information: i32, command:i32, message_data: String)-> std::result::Result<(), Box<dyn std::error::Error>> {
+    let pool = mysql::Pool::new(&*string_builder())?;
+    let mut conn = pool.get_conn()?;
+    conn.exec_drop(
+        "insert into Message (sender_id, retriever_id, message_data) values (:sender_id, :retriever_id, :message_data)",
+        params! {
+            "sender_id" => sender_id,
+            "secondary_id" => secondary_information,
+            "command" => command,
+            "message_data" => &message_data,
+        },
+    ).expect("TODO: panic message beim loggin");
+    println!("Yay! LOG");
+    Ok(())
+}
+
 pub(crate) fn datenbank_putter(sender_id: i32, retriever_id: i32, message_data: String) -> std::result::Result<(), Box<dyn std::error::Error>> {
     let pool = mysql::Pool::new(&*string_builder())?;
     let mut conn = pool.get_conn()?;
