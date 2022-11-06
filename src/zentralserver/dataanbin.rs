@@ -1,6 +1,5 @@
 use mysql::params;
 use mysql::prelude::Queryable;
-use std::str::from_utf8;
 use chrono;
 use chrono::Utc;
 
@@ -13,13 +12,13 @@ struct Message {
     message_data: String,
 }
 
-struct Log {
+/*struct Log {
     sender_id: i32,
     secondary_info:i32,
     command:String,
     data:String,
 
-}
+}*/
 
 pub(crate) fn string_builder() -> String {
     let mysql_ipaddr = variables::mysql_ip("remote".to_string());
@@ -33,9 +32,9 @@ pub(crate) fn string_builder() -> String {
 
 
 pub(crate) fn server_logging(sender_id: i32, secondary_information: i32, command:i32, message_data: String)-> std::result::Result<(), Box<dyn std::error::Error>> {
-    let pool = mysql::Pool::new(&*string_builder())?;
     let now = Utc::now();
     let stamp = now.naive_utc();
+    let pool = mysql::Pool::new(&*string_builder())?;
     let mut conn = pool.get_conn()?;
     conn.exec_drop(
         "insert into log (zeit, sender_id, secondary_info,command, message_data) values (:zeit, :sender_id, :secondary_info, :command, :message_data)",
@@ -68,7 +67,7 @@ pub(crate) fn datenbank_putter(sender_id: i32, retriever_id: i32, message_data: 
     Ok(())
 }
 
-pub(crate) fn datenbank_getter() -> std::result::Result<(), Box<dyn std::error::Error>> {
+/*pub(crate) fn datenbank_getter() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let pool = mysql::Pool::new(&*string_builder())?;
     let mut conn = pool.get_conn()?;
     let selected_payments = conn
@@ -83,6 +82,6 @@ pub(crate) fn datenbank_getter() -> std::result::Result<(), Box<dyn std::error::
     println!("Yay!");
 
     Ok(())
-}
+}*/
 
 

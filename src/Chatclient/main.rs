@@ -10,7 +10,7 @@ use std::io;
 
 mod variables;
 
-fn get_credentials() {}
+//fn get_credentials() {}
 
 fn message_from_user() -> String {
     println!("Message start");
@@ -25,6 +25,7 @@ fn message_from_user() -> String {
             continue;
         } else { break; }
     }
+    //message = "Testping".parse().unwrap();
     return message.to_owned();
 }
 
@@ -84,6 +85,7 @@ fn main() {
 
         match hauptmenu() {
             1 => communication(message_from_user()),
+            2 => println!("TEst"),
             _ => println!("Das ist leider keine Richtige Option")
         }
 
